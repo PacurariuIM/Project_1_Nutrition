@@ -24,28 +24,18 @@ def driver(request):
     """Create a WebDriver instance that can be used for all tests."""
     chrome_options = Options()
     
-    # Add headless option for CI environment
-    if request.config.getoption("--headless"):
-        chrome_options.add_argument('--headless=new')  # Updated headless mode
-    
-    # Use environment variable for user data dir if available
-    user_data_dir = os.getenv('CHROME_USER_DATA_DIR')
-    if user_data_dir:
-        chrome_options.add_argument(f'--user-data-dir={user_data_dir}')
-    
-    # Basic required options
+    # Minimal required options for CI
+    chrome_options.add_argument('--headless=new')
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
-    
-    # Additional options for CI environment
     chrome_options.add_argument('--disable-gpu')
-    chrome_options.add_argument('--disable-software-rasterizer')
-    chrome_options.add_argument('--disable-extensions')
-    chrome_options.add_argument('--disable-infobars')
     
-    # Error logging
-    chrome_options.add_argument('--log-level=3')
-    chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    # Prevent Chrome from using any user data
+    chrome_options.add_argument('--incognito')
+    chrome_options.add_argument('--disable-extensions')
+    chrome_options.add_argument('--disable-plugins')
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    chrome_options.add_experimental_option('useAutomationExtension', False)
     
     # Setup Chrome WebDriver
     service = Service(ChromeDriverManager().install())
@@ -53,8 +43,6 @@ def driver(request):
     driver.implicitly_wait(10)
     
     yield driver
-    
-    # Quit the driver after all tests are done
     driver.quit()
 
 @pytest.fixture(scope="session")
