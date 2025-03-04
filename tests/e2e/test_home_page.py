@@ -3,6 +3,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from tests.e2e.conftest import wait_and_log
+import pytest
 
 def test_home_page_loads(driver, app_url):
     """Test that the home page loads and contains the expected form."""
@@ -23,7 +24,8 @@ def test_home_page_loads(driver, app_url):
     submit_button = driver.find_element(By.CSS_SELECTOR, "button[type='submit']")
     assert submit_button is not None 
 
-def test_form_submission(driver, app_url):
+@pytest.mark.api_dependent
+def test_form_submission(driver, app_url, skip_if_no_api):
     """Test submitting the ingredients form and getting recipes."""
     print("\nStarting form submission test...")
     driver.get(app_url)
@@ -62,7 +64,8 @@ def test_form_submission_no_results(driver, app_url):
     )
     assert "No recipes to display" in error_message.text
 
-def test_recipe_detail_navigation(driver, app_url):
+@pytest.mark.api_dependent
+def test_recipe_detail_navigation(driver, app_url, skip_if_no_api):
     """Test clicking a recipe card navigates to recipe details."""
     driver.get(app_url)
     ingredients_input = WebDriverWait(driver, 10).until(

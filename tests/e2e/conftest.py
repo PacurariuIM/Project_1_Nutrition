@@ -64,4 +64,16 @@ def wait_and_log(driver, locator, timeout=30):
     except Exception as e:
         print(f"Failed to find element: {locator}")
         print(f"Page source: {driver.page_source}")
-        raise e 
+        raise e
+
+def pytest_configure(config):
+    """Add custom markers."""
+    config.addinivalue_line(
+        "markers", "api_dependent: mark test as requiring API access"
+    )
+
+@pytest.fixture
+def skip_if_no_api():
+    """Skip test if SPOONACULAR_API_KEY is not set."""
+    if not os.getenv('SPOONACULAR_API_KEY'):
+        pytest.skip('Test requires SPOONACULAR_API_KEY') 
