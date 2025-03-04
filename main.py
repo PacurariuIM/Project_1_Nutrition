@@ -135,7 +135,10 @@ def recipe():
 
 
 if __name__ == '__main__':
-    uvicorn.run("main:app", host="0.0.0.0", port=8000)
-
-# if __name__ == '__main__':
-#     app.run(debug=True)
+    # Check environment
+    ENV = os.getenv('FLASK_ENV', 'development')
+    
+    if ENV == 'production':
+        uvicorn.run("main:app", host="0.0.0.0", port=8000)
+    else:
+        app.run(debug=True)
