@@ -25,7 +25,7 @@ load_dotenv()
     
 # Route to get ingredients, send request, return recipes
 SPOONACULAR_API_KEY = os.getenv('SPOONACULAR_API_KEY')
-# @app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def get_recipes():
     form = IngredientForm()
     recipes = None
