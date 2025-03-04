@@ -22,24 +22,29 @@ def pytest_addoption(parser):
 def driver(request):
     """Create a WebDriver instance that can be used for all tests."""
     chrome_options = Options()
+    
     # Add headless option for CI environment
     if request.config.getoption("--headless"):
-        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--headless=new')  # Updated headless mode
+    
+    # Basic required options
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
     
-    # Add these lines to suppress the errors:
-    chrome_options.add_argument('--log-level=3')  # Only show fatal errors
-    chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    # Additional options for CI environment
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument('--disable-software-rasterizer')
+    chrome_options.add_argument('--disable-extensions')
+    chrome_options.add_argument('--disable-infobars')
     
-    # Add unique user data directory
-    chrome_options.add_argument('--user-data-dir=/tmp/chrome-data')
-    chrome_options.add_argument('--remote-debugging-port=9222')
+    # Error logging
+    chrome_options.add_argument('--log-level=3')
+    chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
     
     # Setup Chrome WebDriver
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=chrome_options)
-    driver.implicitly_wait(10)  # seconds
+    driver.implicitly_wait(10)
     
     yield driver
     
