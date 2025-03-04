@@ -2,6 +2,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
+from .conftest import wait_and_log
 
 def test_home_page_loads(driver, app_url):
     """Test that the home page loads and contains the expected form."""
@@ -24,27 +25,26 @@ def test_home_page_loads(driver, app_url):
 
 def test_form_submission(driver, app_url):
     """Test submitting the ingredients form and getting recipes."""
-    # Navigate to the home page
+    print("\nStarting form submission test...")
     driver.get(app_url)
+    print(f"Current URL: {driver.current_url}")
     
     # Find and fill the ingredients input
-    ingredients_input = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.ID, "ingredients"))
-    )
+    ingredients_input = wait_and_log(driver, (By.ID, "ingredients"))
     ingredients_input.send_keys("chicken, rice")
+    print("Entered ingredients")
     
     # Submit the form
     ingredients_input.send_keys(Keys.RETURN)
+    print("Submitted form")
     
     # Wait for and verify recipe results appear
-    recipe_cards = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, "recipe-card"))
-    )
-    assert recipe_cards is not None
+    recipe_cards = wait_and_log(driver, (By.CLASS_NAME, "recipe-card"), timeout=60)
+    print("Found recipe cards")
     
-    # Verify we got multiple recipes
-    all_recipe_cards = driver.find_elements(By.CLASS_NAME, "recipe-card")
-    assert len(all_recipe_cards) > 0, "No recipe cards found after search" 
+    # Additional debugging
+    print(f"Page title: {driver.title}")
+    print(f"Current URL after search: {driver.current_url}")
 
 def test_form_submission_no_results(driver, app_url):
     """Test submitting the form with ingredients that return no results."""

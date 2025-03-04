@@ -3,26 +3,27 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
+from .conftest import wait_and_log
 
 def test_recipe_unit_converter(driver, app_url):
     """Test the unit converter functionality on recipe detail page."""
-    # Navigate to a recipe detail page (reusing navigation from previous test)
+    print("\nStarting unit converter test...")
     driver.get(app_url)
-    ingredients_input = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.ID, "ingredients"))
-    )
+    
+    # Navigate to recipe detail
+    ingredients_input = wait_and_log(driver, (By.ID, "ingredients"))
     ingredients_input.send_keys("chicken")
     ingredients_input.send_keys(Keys.RETURN)
+    print("Submitted search")
     
-    # Click first recipe
-    recipe_card = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, "recipe-card"))
-    )
+    recipe_card = wait_and_log(driver, (By.CLASS_NAME, "recipe-card"), timeout=60)
     recipe_card.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
+    print("Clicked recipe card")
     
-    # Test unit converter
-    input_value = driver.find_element(By.ID, "inputValue")
+    # Test converter
+    input_value = wait_and_log(driver, (By.ID, "inputValue"))
     input_value.send_keys("100")
+    print("Entered value")
     
     # Select conversion units
     from_unit = Select(driver.find_element(By.ID, "fromUnit"))

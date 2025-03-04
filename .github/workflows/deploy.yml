@@ -30,9 +30,19 @@ jobs:
     - name: Set up Chrome
       uses: browser-actions/setup-chrome@latest
 
+    - name: Check API Key
+      run: |
+        if [ -z "$SPOONACULAR_API_KEY" ]; then
+          echo "Error: SPOONACULAR_API_KEY is not set"
+          exit 1
+        fi
+      env:
+        SPOONACULAR_API_KEY: ${{ secrets.SPOONACULAR_API_KEY }}
+
     - name: Start Flask server
       env:
         SPOONACULAR_API_KEY: ${{ secrets.SPOONACULAR_API_KEY }}
+        FLASK_ENV: development  # Enable debug mode
       run: |
         python main.py &
         # Wait for server to be ready
