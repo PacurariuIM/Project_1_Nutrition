@@ -5,6 +5,7 @@ from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import os
 
 def pytest_addoption(parser):
     parser.addoption(
@@ -58,3 +59,18 @@ def wait_and_log(driver, locator, timeout=30):
         print(f"Failed to find element: {locator}")
         print(f"Page source: {driver.page_source}")
         raise e
+
+def pytest_configure(config):
+    """Set up test environment."""
+    os.environ['FLASK_ENV'] = 'development'
+
+@pytest.fixture(scope="session", autouse=True)
+def setup_test_env():
+    """Setup test environment variables."""
+    old_env = os.environ.get('FLASK_ENV')
+    os.environ['FLASK_ENV'] = 'development'
+    yield
+    if old_env:
+        os.environ['FLASK_ENV'] = old_env
+    else:
+        del os.environ['FLASK_ENV']

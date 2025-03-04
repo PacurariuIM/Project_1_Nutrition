@@ -31,6 +31,8 @@ jobs:
       uses: browser-actions/setup-chrome@latest
 
     - name: Start Flask server
+      env:
+        FLASK_ENV: development
       run: |
         python main.py &
         # Wait for server to be ready
@@ -48,6 +50,8 @@ jobs:
         pytest --cov=main tests/
 
     - name: Run E2E tests
+      env:
+        FLASK_ENV: development
       run: |
         pytest tests/e2e -v --capture=no
 

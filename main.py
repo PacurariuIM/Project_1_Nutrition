@@ -8,13 +8,16 @@ from forms import IngredientForm
 from dotenv import load_dotenv
 from lxml import html
 
+# Load environment variables from .env file if it exists
+load_dotenv()
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 # db = SQLAlchemy(app)
 
-# Load environment variables from .env file
-load_dotenv()
+# Set environment with production as default
+app.config['ENV'] = os.getenv('FLASK_ENV', 'production')
 
 # Debugging table
 # @app.route('/db_check')
@@ -135,10 +138,7 @@ def recipe():
 
 
 if __name__ == '__main__':
-    # Check environment
-    ENV = os.getenv('FLASK_ENV', 'development')
-    
-    if ENV == 'production':
-        uvicorn.run("main:app", host="0.0.0.0", port=8000)
-    else:
+    if app.config['ENV'] == 'development':
         app.run(debug=True)
+    else:
+        uvicorn.run("main:app", host="0.0.0.0", port=8000)
