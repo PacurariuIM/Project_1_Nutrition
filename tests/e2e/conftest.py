@@ -66,12 +66,6 @@ def wait_and_log(driver, locator, timeout=30):
         print(f"Page source: {driver.page_source}")
         raise e
 
-def pytest_configure(config):
-    """Add custom markers."""
-    config.addinivalue_line(
-        "markers", "api_dependent: mark test as requiring API access"
-    )
-
 @pytest.fixture
 def skip_if_no_api():
     """Skip test if SPOONACULAR_API_KEY is not set."""
