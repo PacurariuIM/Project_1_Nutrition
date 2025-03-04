@@ -83,13 +83,12 @@ jobs:
           # Step 2: Deploy new code
           echo "Deploying new code..."
           cd "$HOME/eat-me" || exit 1
-          git reset --hard HEAD || exit 1
           
-          # Configure git pull strategy
-          git config pull.rebase false
+          # Fetch latest code
+          git fetch origin main
           
-          # Pull with merge strategy
-          git pull origin main --no-edit || exit 1
+          # Reset to origin/main instead of pulling
+          git reset --hard origin/main || exit 1
 
           # Step 3: Restart services
           echo "Restarting services..."
