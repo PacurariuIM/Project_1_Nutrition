@@ -35,7 +35,15 @@ jobs:
         SPOONACULAR_API_KEY: ${{ secrets.SPOONACULAR_API_KEY }}
       run: |
         python main.py &
-        sleep 5
+        # Wait for server to be ready
+        for i in {1..30}; do
+          if curl -s http://127.0.0.1:5000 > /dev/null; then
+            echo "Server is up!"
+            break
+          fi
+          echo "Waiting for server... ($i)"
+          sleep 1
+        done
 
     - name: Run unit tests
       run: |
@@ -44,8 +52,9 @@ jobs:
     - name: Run E2E tests
       env:
         SPOONACULAR_API_KEY: ${{ secrets.SPOONACULAR_API_KEY }}
+        PYTHONUNBUFFERED: "1"  # Enable real-time logging
       run: |
-        pytest tests/e2e -v
+        pytest tests/e2e -v --capture=no  # Show print statements
 
   deploy:
     needs: test  # Deploy only if tests pass

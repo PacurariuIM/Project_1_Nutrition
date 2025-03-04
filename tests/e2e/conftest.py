@@ -4,6 +4,8 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 import os
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 def pytest_addoption(parser):
     parser.addoption(
@@ -40,7 +42,7 @@ def driver(request):
     # Setup Chrome WebDriver
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=chrome_options)
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(30)
     
     yield driver
     driver.quit()
@@ -48,4 +50,18 @@ def driver(request):
 @pytest.fixture(scope="session")
 def app_url(request):
     """Get the application URL from command line options."""
-    return request.config.getoption("--app-url") 
+    return request.config.getoption("--app-url")
+
+# Add a helper function for debugging
+def wait_and_log(driver, locator, timeout=30):
+    """Wait for element and log if not found."""
+    try:
+        element = WebDriverWait(driver, timeout).until(
+            EC.presence_of_element_located(locator)
+        )
+        print(f"Found element: {locator}")
+        return element
+    except Exception as e:
+        print(f"Failed to find element: {locator}")
+        print(f"Page source: {driver.page_source}")
+        raise e 
