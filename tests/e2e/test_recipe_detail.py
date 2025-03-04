@@ -3,7 +3,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
-from .conftest import wait_and_log
+from tests.e2e.conftest import wait_and_log
 
 def test_recipe_unit_converter(driver, app_url):
     """Test the unit converter functionality on recipe detail page."""

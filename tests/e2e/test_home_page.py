@@ -2,7 +2,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
-from .conftest import wait_and_log
+from tests.e2e.conftest import wait_and_log
 
 def test_home_page_loads(driver, app_url):
     """Test that the home page loads and contains the expected form."""
