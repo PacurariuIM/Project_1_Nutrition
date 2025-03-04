@@ -32,6 +32,10 @@ def driver(request):
     chrome_options.add_argument('--log-level=3')  # Only show fatal errors
     chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
     
+    # Add unique user data directory
+    chrome_options.add_argument('--user-data-dir=/tmp/chrome-data')
+    chrome_options.add_argument('--remote-debugging-port=9222')
+    
     # Setup Chrome WebDriver
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=chrome_options)
