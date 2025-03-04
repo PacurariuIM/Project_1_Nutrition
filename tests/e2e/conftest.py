@@ -3,6 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
+import os
 
 def pytest_addoption(parser):
     parser.addoption(
@@ -26,6 +27,11 @@ def driver(request):
     # Add headless option for CI environment
     if request.config.getoption("--headless"):
         chrome_options.add_argument('--headless=new')  # Updated headless mode
+    
+    # Use environment variable for user data dir if available
+    user_data_dir = os.getenv('CHROME_USER_DATA_DIR')
+    if user_data_dir:
+        chrome_options.add_argument(f'--user-data-dir={user_data_dir}')
     
     # Basic required options
     chrome_options.add_argument('--no-sandbox')

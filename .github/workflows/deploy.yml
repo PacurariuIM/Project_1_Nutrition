@@ -27,10 +27,20 @@ jobs:
         pip install -r requirements-test.txt
         pip install pytest pytest-cov
 
+    - name: Set up Chrome environment
+      run: |
+        mkdir -p /tmp/chrome_test
+        chmod 777 /tmp/chrome_test
+
     - name: Set up Chrome
       uses: browser-actions/setup-chrome@latest
+      with:
+        chrome-version: stable
 
     - name: Start Flask server
+      env:
+        FLASK_ENV: testing
+        SPOONACULAR_API_KEY: ${{ secrets.SPOONACULAR_API_KEY }}
       run: |
         python main.py &
         sleep 5  # Wait for server to start
@@ -41,6 +51,7 @@ jobs:
 
     - name: Run E2E tests
       env:
+        CHROME_USER_DATA_DIR: /tmp/chrome_test
         SPOONACULAR_API_KEY: ${{ secrets.SPOONACULAR_API_KEY }}
       run: |
         pytest tests/e2e -v --headless
