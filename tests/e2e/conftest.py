@@ -3,7 +3,6 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
-import os
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -31,13 +30,7 @@ def driver(request):
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
     chrome_options.add_argument('--disable-gpu')
-    
-    # Prevent Chrome from using any user data
     chrome_options.add_argument('--incognito')
-    chrome_options.add_argument('--disable-extensions')
-    chrome_options.add_argument('--disable-plugins')
-    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    chrome_options.add_experimental_option('useAutomationExtension', False)
     
     # Setup Chrome WebDriver
     service = Service(ChromeDriverManager().install())
@@ -65,9 +58,3 @@ def wait_and_log(driver, locator, timeout=30):
         print(f"Failed to find element: {locator}")
         print(f"Page source: {driver.page_source}")
         raise e
-
-@pytest.fixture
-def skip_if_no_api():
-    """Skip test if SPOONACULAR_API_KEY is not set."""
-    if not os.getenv('SPOONACULAR_API_KEY'):
-        pytest.skip('Test requires SPOONACULAR_API_KEY') 
