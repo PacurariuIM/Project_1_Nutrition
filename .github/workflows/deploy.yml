@@ -94,7 +94,13 @@ jobs:
           # Reset to origin/main instead of pulling
           git reset --hard origin/main || exit 1
 
-          # Step 3: Restart services
+          # Step 3: Deploy monitoring stack
+          echo "Starting monitoring stack..."
+          cd "$HOME/eat-me/monitoring"
+          docker compose pull
+          docker compose up -d
+
+          # Step 4: Restart services
           echo "Restarting services..."
           sudo systemctl restart nginx || exit 1
           sudo systemctl restart eat-me.service || exit 1
