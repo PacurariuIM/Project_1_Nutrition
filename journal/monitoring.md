@@ -12,11 +12,6 @@ In order to prevent or fix issues, we need to monitor our app
 - Add a docker-compose.yml with: Prometheus, Node Exporter, Blackbox Exporter, Grafana
 - Configure service ports and volumes.
 
-## Configure Prometheus
-
-- Create prometheus.yml with scrape targets (Node Exporter (for system metrics), Blackbox Exporter (for probing the app))
-- Define scrape intervals and job labels.
-
 ## Configure Grafana
 
 - Launch Grafana container and log in.
@@ -24,6 +19,11 @@ In order to prevent or fix issues, we need to monitor our app
 - Import or create dashboards:
     - System metrics (Node Exporter)
     - Uptime & latency (Blackbox Exporter)
+
+## Configure Prometheus
+
+- Create prometheus.yml with scrape targets (Node Exporter (for system metrics), Blackbox Exporter (for probing the app))
+- Define scrape intervals and job labels.
 
 ## Configure Alerting
 
@@ -67,4 +67,36 @@ scp -r monitoring root@your-server-ip:/opt/
 # 4. Start the monitoring stack
 cd /opt/monitoring
 docker compose up -d
+```
+- one issue I ran into: the user user running the GitHub Actions SSH session didn't had permissions to access the Docker socket
+- had to log into the root account, and give permission to access it without a password:
+
+```sh
+sudo visudo
+
+# add these permissions for the respective username
+USERNAME ALL=(ALL) NOPASSWD: /usr/bin/docker, /usr/local/bin/docker-compose
+```
+
+## Step 2: Configure Grafana
+
+- test on the server if monitoring container is up and running.
+```sh
+docker ps
+```
+- if successful, we can login into Grafana, typing the following in the browser:
+```
+http://your-server-ip:3000
+```
+- login using credentials `admin/admin`, we'll be prompted to change them
+- next we add Prometheus as a new data source (Administration -> Plugins -> Prometheus -> Add new data source)
+- we test it using this link in the URL field:
+```
+http://prometheus:9090
+```
+- click `Save & Test`
+- we can import usefull dashboards (e.g. `Node Exporter Full` - code 1860), by clicking the top right `+` button on the home page. We introduce the dashboard code there and link it to our prometheus data source
+- we can verify prometheus targets:
+```sh
+http://your-server-ip:9090/targets
 ```
