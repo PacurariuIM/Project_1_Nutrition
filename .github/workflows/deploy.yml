@@ -97,8 +97,8 @@ jobs:
           # Step 3: Deploy monitoring stack
           echo "Starting monitoring stack..."
           cd "$HOME/eat-me/monitoring"
-          docker compose pull
-          docker compose up -d
+          sudo docker compose pull
+          sudo docker compose up -d
 
           # Step 4: Restart services
           echo "Restarting services..."
