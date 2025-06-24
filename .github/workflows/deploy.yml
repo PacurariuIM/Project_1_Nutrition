@@ -99,10 +99,7 @@ jobs:
           cd "$HOME/eat-me/monitoring"
           sudo docker compose pull
           sudo docker compose up -d
-          echo "Verifying containers are running..."
-          docker ps
-          docker compose ps
-
+          
           # Step 4: Restart services
           echo "Restarting services..."
           sudo systemctl restart nginx || exit 1
